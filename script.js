@@ -10,15 +10,76 @@ const navToggle = document.getElementById('navToggle');
 const navbar    = document.querySelector('.navbar');
 
 if (navToggle && navbar) {
-    navToggle.addEventListener('click', () => navbar.classList.toggle('open'));
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', () => navbar.classList.remove('open'));
+    const applyMobileNavState = () => {
+        const isMobile = window.innerWidth <= 768;
+        const navLinks = navbar.querySelector('.nav-links');
+        const desktopNavCta = navbar.querySelector('.nav-cta-desktop');
+        const isOpen = navbar.classList.contains('open');
+
+        if (!isMobile) {
+            navbar.style.display = '';
+            navbar.style.flexDirection = '';
+            navbar.style.alignItems = '';
+            if (navLinks) {
+                navLinks.style.display = '';
+                navLinks.style.flexDirection = '';
+                navLinks.style.width = '';
+                navLinks.style.maxHeight = '';
+                navLinks.style.overflowY = '';
+                navLinks.style.order = '';
+            }
+            if (desktopNavCta) {
+                desktopNavCta.style.display = '';
+                desktopNavCta.style.position = '';
+                desktopNavCta.style.width = '';
+                desktopNavCta.style.order = '';
+            }
+            return;
+        }
+
+        navbar.style.display = 'flex';
+        navbar.style.flexDirection = isOpen ? 'column' : 'row';
+        navbar.style.alignItems = isOpen ? 'stretch' : '';
+
+        if (navLinks) {
+            navLinks.style.display = isOpen ? 'flex' : 'none';
+            navLinks.style.flexDirection = isOpen ? 'column' : '';
+            navLinks.style.width = isOpen ? '100%' : '';
+            navLinks.style.maxHeight = isOpen ? 'min(72vh, 480px)' : '';
+            navLinks.style.overflowY = isOpen ? 'auto' : '';
+            navLinks.style.order = isOpen ? '1' : '';
+        }
+
+        if (desktopNavCta) {
+            desktopNavCta.style.display = isOpen ? 'none' : 'none';
+            desktopNavCta.style.position = isOpen ? 'static' : '';
+            desktopNavCta.style.width = isOpen ? '100%' : '';
+            desktopNavCta.style.order = isOpen ? '2' : '';
+        }
+    };
+
+    navToggle.addEventListener('click', () => {
+        navbar.classList.toggle('open');
+        applyMobileNavState();
     });
-    // Close mobile menu when clicking the "Hire Me" button in navbar
+
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+            navbar.classList.remove('open');
+            applyMobileNavState();
+        });
+    });
+
     const navHireBtn = navbar.querySelector('a.btn');
     if (navHireBtn) {
-        navHireBtn.addEventListener('click', () => navbar.classList.remove('open'));
+        navHireBtn.addEventListener('click', () => {
+            navbar.classList.remove('open');
+            applyMobileNavState();
+        });
     }
+
+    window.addEventListener('resize', applyMobileNavState);
+    applyMobileNavState();
 }
 
 /* ---------------------------------------------------------
@@ -263,32 +324,28 @@ const projectData = [
         title:  'Khan Traders & Al Shahbaaz Zarai Allaat',
         desc:   'A modern and responsive website built for a Pakistan-based agricultural machinery dealer, showcasing their products, gallery and contact details. Built with semantic HTML, CSS3 and vanilla JavaScript for maximum performance and SEO.',
         tags:   ['Responsive', 'Modern Design', 'Fast & Optimized', 'SEO'],
-        live:   '#',
-        github: '#'
+        live:   '#'
     },
     {
         icon:   '💼',
         title:  'Business Portfolio Website',
         desc:   'A sleek and professional portfolio website design for a business consultant. Features glassmorphism UI, smooth animations, dark theme, and mobile-first responsive layout. Designed in Figma and built with HTML/CSS/JS.',
         tags:   ['UI/UX', 'Figma', 'Glassmorphism', 'Dark Theme'],
-        live:   '#',
-        github: '#'
+        live:   '#'
     },
     {
         icon:   '🛒',
         title:  'E-Commerce Store',
         desc:   'A fully functional WooCommerce-powered online store with custom product pages, cart, checkout, and payment integration. Optimized for speed and SEO with mobile-first responsive design and custom WordPress theme.',
         tags:   ['WordPress', 'WooCommerce', 'E-Commerce', 'SEO'],
-        live:   '#',
-        github: '#'
+        live:   '#'
     },
     {
         icon:   '🎨',
         title:  'Brand Identity Design',
         desc:   'Complete brand identity package including logo design, color palette, typography system, business card design, social media kit and brand guidelines document. Designed in Figma with a modern minimalist aesthetic.',
         tags:   ['Branding', 'Logo', 'Figma', 'Identity'],
-        live:   '#',
-        github: '#'
+        live:   '#'
     }
 ];
 
@@ -299,7 +356,6 @@ const modalIcon   = document.getElementById('modalIcon');
 const modalTitle  = document.getElementById('modalTitle');
 const modalDesc   = document.getElementById('modalDesc');
 const modalTags   = document.getElementById('modalTags');
-const modalGithub = document.getElementById('modalGithub');
 const modalLive   = document.getElementById('modalLive');
 
 function openModal(index) {
@@ -309,7 +365,6 @@ function openModal(index) {
     modalTitle.textContent = data.title;
     modalDesc.textContent  = data.desc;
     modalTags.innerHTML    = data.tags.map(t => `<span>${t}</span>`).join('');
-    modalGithub.href = data.github;
     modalLive.href   = data.live;
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
